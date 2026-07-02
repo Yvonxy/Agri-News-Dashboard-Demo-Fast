@@ -447,9 +447,9 @@ def run_refresh(full_refresh: bool = False) -> Dict[str, object]:
     progress = st.progress(0)
     try:
         if full_refresh:
-            status_box.info("Running full RSS refresh across all global sources...")
+            status_box.info("Running full RSS refresh across all configured sources...")
         else:
-            status_box.info("Refreshing latest news from high-priority global RSS sources...")
+            status_box.info("Refreshing latest news from high-priority RSS sources...")
         progress.progress(15)
 
         result = refresh_all_sources(full_refresh=full_refresh)
@@ -492,7 +492,7 @@ def render_header() -> None:
         f"""
         <div class="main-title">🌾 Agricultural Market Intelligence Dashboard</div>
         <div class="sub-title">
-            Global/VPN mode · {source_summary.get('total_sources', 0)} registered sources ·
+            {source_summary.get('total_sources', 0)} registered sources ·
             {source_summary.get('rss_ready_sources', 0)} RSS-ready feeds · ranked by market impact
         </div>
         """,
@@ -505,7 +505,6 @@ def render_sidebar() -> None:
     sanitize_filter_state(source_options=available_sources)
 
     st.sidebar.markdown("### Controls")
-    st.sidebar.caption("Source mode: **Global Full / VPN**")
 
     st.sidebar.selectbox(
         "Date Window",
@@ -588,7 +587,7 @@ def render_sidebar() -> None:
             st.session_state.last_refresh_result = run_refresh(full_refresh=False)
 
     with st.sidebar.expander("Advanced refresh", expanded=False):
-        st.caption("Use full refresh only when you have time. It checks every RSS-ready global source.")
+        st.caption("Use full refresh only when you have time. It checks every RSS-ready source.")
         if st.button("Full RSS refresh", use_container_width=True):
             st.session_state.last_refresh_result = run_refresh(full_refresh=True)
 
@@ -599,7 +598,7 @@ def render_sidebar() -> None:
 
     summary = summarize_sources()
     st.sidebar.caption(
-        f"Registered global sources: {summary['total_sources']} · RSS-ready: {summary['rss_ready_sources']}"
+        f"Registered sources: {summary['total_sources']} · RSS-ready: {summary['rss_ready_sources']}"
     )
 
 
@@ -864,7 +863,7 @@ def maybe_auto_refresh_notice() -> None:
         return
     st.session_state.auto_refresh_checked = True
     if should_auto_refresh(hours=24):
-        st.caption("Data is older than 24 hours or empty. Use Refresh in the sidebar to run the global source update.")
+        st.caption("Data is older than 24 hours or empty. Use Refresh in the sidebar to update the news feeds.")
 
 
 def main() -> None:
